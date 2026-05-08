@@ -77,6 +77,7 @@ def append_chat_log(
     temperature: float,
     top_k: int | None,
     top_p: float | None,
+    max_output_tokens: int | None,
 ) -> None:
     entry = {
         "prompt": prompt,
@@ -87,6 +88,7 @@ def append_chat_log(
             "temperature": temperature,
             "top_k": top_k,
             "top_p": top_p,
+            "max_output_tokens": max_output_tokens,
         },
     }
     log_file.parent.mkdir(parents=True, exist_ok=True)
