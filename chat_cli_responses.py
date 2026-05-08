@@ -123,7 +123,6 @@ async def run_chat(
                 token_usage=reply.token_usage,
                 latency_seconds=reply.latency_seconds,
                 temperature=temperature,
-                top_k=None,
                 top_p=top_p,
                 max_output_tokens=max_output_tokens,
             )

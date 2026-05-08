@@ -32,7 +32,6 @@ def normalize_endpoint(endpoint: str) -> tuple[bool, EndpointMode, str]:
 
     if parsed.scheme not in {"http", "https"} or not parsed.netloc:
         return False, None, "Use a full HTTPS endpoint, for example https://my-resource.openai.azure.com"
-        # raise click.BadParameter("Use a full HTTPS endpoint, for example https://my-resource.openai.azure.com")
 
     path = parsed.path.rstrip("/")
     if path == "":
@@ -41,10 +40,6 @@ def normalize_endpoint(endpoint: str) -> tuple[bool, EndpointMode, str]:
         return True, EndpointMode.V1_BASE_URL, f"{normalized}/"
 
     return False, None, "Use either the Azure resource endpoint (https://...openai.azure.com) or the full v1 base URL (.../openai/v1/)."
-    # raise click.BadParameter(
-    #     "Use either the Azure resource endpoint (https://...openai.azure.com) "
-    #     "or the full v1 base URL (.../openai/v1/)."
-    # )
 
 
 def build_client(*, endpoint: str, api_key: str, api_version: str) -> tuple[bool, AsyncAzureOpenAI | AsyncOpenAI, str]:
@@ -75,7 +70,6 @@ def append_chat_log(
     token_usage: TokenUsage,
     latency_seconds: float,
     temperature: float,
-    top_k: int | None,
     top_p: float | None,
     max_output_tokens: int | None,
 ) -> None:
@@ -86,7 +80,6 @@ def append_chat_log(
         "latency_seconds": round(latency_seconds, 3),
         "model_parameters": {
             "temperature": temperature,
-            "top_k": top_k,
             "top_p": top_p,
             "max_output_tokens": max_output_tokens,
         },

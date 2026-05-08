@@ -25,12 +25,12 @@ async def stream_reply(
     deployment: str,
     messages: list[ChatCompletionMessageParam],
     temperature: float,
-    top_k: int | None,
     top_p: float | None,
+    max_output_tokens: int | None,
 ) -> ReplyResult:
     """Stream the assistant reply to the terminal and return the full text."""
     request_started_at = perf_counter()
-    extra_body = {"top_k": top_k} if top_k is not None else None
+
     stream = await client.chat.completions.create(
         model=deployment,
         messages=messages,
@@ -38,7 +38,7 @@ async def stream_reply(
         stream_options={"include_usage": True},
         temperature=temperature,
         top_p=top_p,
-        extra_body=extra_body,
+        max_completion_tokens=max_output_tokens,
     )
 
     parts: list[str] = []
@@ -76,8 +76,8 @@ async def run_chat(
     system_prompt: str,
     log_file: Path,
     temperature: float,
-    top_k: int | None,
     top_p: float | None,
+    max_output_tokens: int | None,
 ) -> None:
     valid, client, error_message = build_client(endpoint=endpoint, api_key=api_key, api_version=api_version)
 
@@ -110,8 +110,8 @@ async def run_chat(
                     deployment=deployment,
                     messages=messages,
                     temperature=temperature,
-                    top_k=top_k,
                     top_p=top_p,
+                    max_output_tokens=max_output_tokens,
                 )
             except APIConnectionError as exc:
                 messages.pop()
@@ -130,8 +130,8 @@ async def run_chat(
                 token_usage=reply.token_usage,
                 latency_seconds=reply.latency_seconds,
                 temperature=temperature,
-                top_k=top_k,
                 top_p=top_p,
+                max_output_tokens=max_output_tokens,
             )
     finally:
         await client.close()
@@ -185,16 +185,16 @@ async def run_chat(
     help="Sampling temperature for the chat completion.",
 )
 @click.option(
-    "--top-k",
-    type=click.IntRange(min=1),
-    default=None,
-    help="Optional top-k sampling value passed through as an extra request field.",
-)
-@click.option(
     "--top-p",
     type=click.FloatRange(min=0.0, max=1.0),
     default=None,
     help="Optional nucleus sampling value for the chat completion.",
+)
+@click.option(
+    "--max-output-tokens",
+    type=click.IntRange(min=1),
+    default=None,
+    help="Optional max output tokens value passed through as an extra request field.",
 )
 def main(
     endpoint: str,
@@ -204,8 +204,8 @@ def main(
     system_prompt: str,
     log_file: Path,
     temperature: float,
-    top_k: int | None,
     top_p: float | None,
+    max_output_tokens: int | None,
 ) -> None:
     """Start an interactive Azure OpenAI chat session."""
     asyncio.run(
@@ -217,8 +217,8 @@ def main(
             system_prompt=system_prompt,
             log_file=log_file,
             temperature=temperature,
-            top_k=top_k,
             top_p=top_p,
+            max_output_tokens=max_output_tokens,
         )
     )
 
