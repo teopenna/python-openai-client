@@ -70,6 +70,21 @@ The application loads `.env` automatically when it starts.
 - the Azure resource endpoint, for example `https://your-resource.openai.azure.com`
 - a full compatible base URL ending in `/openai/v1/`
 
+### Configure temperature for your deployment
+
+For a model that doesn't support `temperature`, add an entry set to `False` in `DEPLOYMENT_TEMPERATURES_ALLOWED` in each script you use ([`chat_cli.py`](chat_cli.py) or [`chat_cli_responses.py`](chat_cli_responses.py)). Use the exact deployment name you pass via `AZURE_OPENAI_DEPLOYMENT` or `--deployment` as the key. The CLI then omits `temperature` from API requests, even when `--temperature` is set.
+
+Both scripts already include `"gpt-5-mini": False`. If you deployed that model under a custom name such as `my-gpt-5-mini`, add that name to the dictionary as well.
+
+```python
+DEPLOYMENT_TEMPERATURES_ALLOWED = {
+    "gpt-5-mini": False,
+    "my-gpt-5-mini": False,
+}
+```
+
+Deployments whose models support `temperature` use the CLI's temperature setting by default and need no entry.
+
 ## Run the Chat Completions CLI
 
 ```bash
