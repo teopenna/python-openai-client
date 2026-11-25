@@ -5,10 +5,10 @@ from pathlib import Path
 from time import perf_counter
 
 import click
+from dotenv import load_dotenv
 from openai import APIConnectionError, APIStatusError, AsyncAzureOpenAI, AsyncOpenAI
 from openai.types.chat import ChatCompletionMessageParam
 from openai.types.completion_usage import CompletionUsage
-from dotenv import load_dotenv
 
 from utility import ReplyResult, append_chat_log, build_client, serialize_usage
 
