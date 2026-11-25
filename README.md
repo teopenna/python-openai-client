@@ -45,6 +45,8 @@ To install an individual package, use `uv pip install <package>`. If the applica
 
 ## Configure access
 
+I deployed GPT-5 mini in Microsoft Foundry for this project. GPT-5 mini doesn't support `temperature`, so I added a per-deployment setting in both CLIs to omit it from requests.
+
 Both scripts read configuration from command-line options or environment variables. For a shell session, you can export these values before running either CLI:
 
 ```bash
