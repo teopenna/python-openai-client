@@ -1,8 +1,8 @@
 """Contains utility functions and classes for the chat CLI."""
 
+import json
 from dataclasses import dataclass
 from enum import StrEnum
-import json
 from urllib.parse import urlparse
 from zipfile import Path
 
