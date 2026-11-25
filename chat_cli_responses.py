@@ -18,6 +18,9 @@ DEFAULT_API_VERSION = "2024-10-21"
 EXIT_COMMANDS = {"exit", "quit", ":q"}
 DEFAULT_TEMPERATURE = 0.1
 DEFAULT_LOG_FILE = Path("logs", "chat_log.jsonl")
+DEPLOYMENT_TEMPERATURES_ALLOWED = {
+    "gpt-5-mini": False,
+}
 
 async def stream_reply(
     *,
@@ -30,15 +33,25 @@ async def stream_reply(
 ) -> ReplyResult:
     """Stream the assistant reply to the terminal and return the full text."""
     request_started_at = perf_counter()
+
     
-    stream = await client.responses.create(
-        model=deployment,
-        input=messages,
-        stream=True,
-        temperature=temperature,
-        top_p=top_p,
-        max_output_tokens=max_output_tokens,
-    )
+    if DEPLOYMENT_TEMPERATURES_ALLOWED.get(deployment, True) is False:
+        stream = await client.responses.create(
+            model=deployment,
+            input=messages,
+            stream=True,
+            top_p=top_p,
+            max_output_tokens=max_output_tokens,
+        )
+    else:
+        stream = await client.responses.create(
+            model=deployment,
+            input=messages,
+            stream=True,
+            temperature=temperature,
+            top_p=top_p,
+            max_output_tokens=max_output_tokens,
+        )
 
     parts: list[str] = []
     usage: CompletionUsage | None = None
@@ -175,7 +188,7 @@ async def run_chat(
     type=click.FloatRange(min=0.0, max=2.0),
     default=DEFAULT_TEMPERATURE,
     show_default=True,
-    help="Sampling temperature for the chat completion.",
+    help="Sampling temperature for the chat completion, for model supporting it.",
 )
 @click.option(
     "--top-p",
